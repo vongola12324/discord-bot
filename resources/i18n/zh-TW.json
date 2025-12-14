@@ -18,6 +18,57 @@
   "game": {
     "select_game": "請選擇一個遊戲！",
     "unknown_game": "未知的遊戲！",
+    "wordle": {
+      "title": "🔤 **Wordle 猜單字遊戲** 🔤",
+      "title_with_length": "🔤 **Wordle 猜單字遊戲** 🔤 | %d 字母",
+      "info": {
+        "how_to_play": "**如何遊玩：**",
+        "step1": "1. 我會選擇一個神秘的 %d 字母英文單字",
+        "step2": "2. 你猜測這個單字",
+        "step3": "3. 我會用顏色告訴你：",
+        "step3_green": "   • 🟩 **綠色** = 字母正確且位置正確",
+        "step3_yellow": "   • 🟨 **黃色** = 字母正確但位置錯誤",
+        "step3_red": "   • 🟥 **紅色** = 這個字母不在單字中",
+        "step4": "4. 你有 6 次機會猜出這個單字！",
+        "example": "**範例：**",
+        "example_secret": "答案：`CRANE`",
+        "example_guess": "猜測：`CRATE` → 結果：",
+        "example_result": "🟩🟩🟩🟥🟩 (C, R, A 位置正確，T 不在單字中，E 位置正確)",
+        "ready": "**準備好了嗎？**",
+        "start_button": "點擊「開始猜測」按鈕來開始遊戲！"
+      },
+      "rules": {
+        "title": "**規則：**",
+        "word_length": "• %d 字母的英文單字",
+        "attempts": "• 6 次猜測機會",
+        "colors": "• 根據顏色提示調整猜測"
+      },
+      "attempts": "**嘗試次數：** %d/6",
+      "history": "**歷史記錄：**",
+      "no_guesses": "*還沒有猜測。點擊「進行猜測」開始！*",
+      "answer": "**答案：** ||%s||",
+      "button": {
+        "guess": "進行猜測",
+        "giveup": "放棄"
+      },
+      "modal": {
+        "title": "Wordle - 進行猜測",
+        "input_label": "輸入你的 %d 字母英文單字",
+        "input_placeholder": "例如：CRANE"
+      },
+      "error": {
+        "already_active": "你已經有一個進行中的遊戲！請先完成它。",
+        "no_active_game": "你沒有進行中的遊戲！",
+        "invalid_length": "❌ 無效的猜測！請輸入 %d 個英文字母。",
+        "invalid_word": "❌ 無效的單字！請輸入有效的英文單字。",
+        "not_alpha": "❌ 無效的猜測！只能包含英文字母。"
+      },
+      "result": {
+        "won": "🎉 **恭喜！**\n你在 %d 次嘗試中猜出了單字！",
+        "lost": "💔 **遊戲結束！**\n你已經用完了所有 6 次機會。",
+        "giveup": "🏳️ **你放棄了！**\n下次加油！"
+      }
+    },
     "bullsandcows": {
       "title": "🐮 **1A2B 猜數字遊戲** 🐮",
       "title_with_difficulty": "🐮 **1A2B 猜數字遊戲** 🐮 | %s %s 模式",

@@ -2,6 +2,7 @@ package game
 
 import (
 	"hiei-discord-bot/internal/commands/game/games/bullsandcows"
+	"hiei-discord-bot/internal/commands/game/games/wordle"
 	"hiei-discord-bot/internal/i18n"
 
 	"github.com/bwmarrin/discordgo"
@@ -44,8 +45,28 @@ func (c *Command) Definition() *discordgo.ApplicationCommand {
 					},
 				},
 			},
+			{
+				Type:        discordgo.ApplicationCommandOptionSubCommand,
+				Name:        "wordle",
+				Description: "Play the Wordle word guessing game",
+				Options: []*discordgo.ApplicationCommandOption{
+					{
+						Type:        discordgo.ApplicationCommandOptionInteger,
+						Name:        "length",
+						Description: "Word length (3-10, default: 5)",
+						Required:    false,
+						MinValue:    float64Ptr(3),
+						MaxValue:    10,
+					},
+				},
+			},
 		},
 	}
+}
+
+// float64Ptr returns a pointer to a float64
+func float64Ptr(f float64) *float64 {
+	return &f
 }
 
 // Execute runs the game command
@@ -63,6 +84,8 @@ func (c *Command) Execute(s *discordgo.Session, i *discordgo.InteractionCreate) 
 	switch subcommand.Name {
 	case "bullsandcows":
 		return bullsandcows.HandleStart(s, i)
+	case "wordle":
+		return wordle.HandleStart(s, i)
 	default:
 		return respondError(s, i, locale, "game.unknown_game")
 	}

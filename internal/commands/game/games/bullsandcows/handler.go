@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/bwmarrin/discordgo"
 	"hiei-discord-bot/internal/i18n"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 // HandleStart starts a new Bulls and Cows game or shows game info
@@ -295,6 +296,7 @@ func buildGameMessage(game *GameState, gameOver bool) *discordgo.InteractionResp
 
 	return &discordgo.InteractionResponseData{
 		Content: builder.String(),
+		Flags:   discordgo.MessageFlagsEphemeral,
 	}
 }
 

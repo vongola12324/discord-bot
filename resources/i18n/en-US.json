@@ -18,6 +18,57 @@
   "game": {
     "select_game": "Please select a game!",
     "unknown_game": "Unknown game!",
+    "wordle": {
+      "title": "🔤 **Wordle Game** 🔤",
+      "title_with_length": "🔤 **Wordle Game** 🔤 | %d Letters",
+      "info": {
+        "how_to_play": "**How to Play:**",
+        "step1": "1. I'll choose a secret %d-letter English word",
+        "step2": "2. You guess the word",
+        "step3": "3. I'll tell you with colors:",
+        "step3_green": "   • 🟩 **Green** = Correct letter in correct position",
+        "step3_yellow": "   • 🟨 **Yellow** = Correct letter in wrong position",
+        "step3_red": "   • 🟥 **Red** = Letter not in the word",
+        "step4": "4. You have 6 attempts to guess the word!",
+        "example": "**Example:**",
+        "example_secret": "Answer: `CRANE`",
+        "example_guess": "Guess: `CRATE` → Result:",
+        "example_result": "🟩🟩🟩🟥🟩 (C, R, A correct position, T not in word, E correct position)",
+        "ready": "**Ready to play?**",
+        "start_button": "Click 'Make a Guess' button to start the game!"
+      },
+      "rules": {
+        "title": "**Rules:**",
+        "word_length": "• %d-letter English word",
+        "attempts": "• 6 guessing attempts",
+        "colors": "• Adjust your guess based on color hints"
+      },
+      "attempts": "**Attempts:** %d/6",
+      "history": "**History:**",
+      "no_guesses": "*No guesses yet. Click 'Make a Guess' to start!*",
+      "answer": "**Answer:** ||%s||",
+      "button": {
+        "guess": "Make a Guess",
+        "giveup": "Give Up"
+      },
+      "modal": {
+        "title": "Wordle - Make Your Guess",
+        "input_label": "Enter your %d-letter English word",
+        "input_placeholder": "e.g., CRANE"
+      },
+      "error": {
+        "already_active": "You already have an active game! Please finish it first.",
+        "no_active_game": "You don't have an active game!",
+        "invalid_length": "❌ Invalid guess! Please enter %d English letters.",
+        "invalid_word": "❌ Invalid word! Please enter a valid English word.",
+        "not_alpha": "❌ Invalid guess! Only English letters allowed."
+      },
+      "result": {
+        "won": "🎉 **Congratulations!**\nYou guessed the word in %d attempts!",
+        "lost": "💔 **Game Over!**\nYou've used all 6 attempts.",
+        "giveup": "🏳️ **You gave up!**\nBetter luck next time!"
+      }
+    },
     "bullsandcows": {
       "title": "🐮 **Bulls and Cows** 🐮",
       "title_with_difficulty": "🐮 **Bulls and Cows** 🐮 | %s %s Mode",
