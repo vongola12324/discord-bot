@@ -1,0 +1,83 @@
+{
+  "common": {
+    "error_prefix": "❌",
+    "success_prefix": "✅"
+  },
+  "command": {
+    "unknown": "Unknown command!",
+    "execution_error": "An error occurred while executing the command.",
+    "reload": {
+      "guild_only": "reload command can only be used in a guild",
+      "failed": "Failed to reload commands: %v",
+      "success": "Successfully reloaded %d command(s) for this server!"
+    },
+    "ping": {
+      "response": "🏓 Pong! Latency: %v"
+    }
+  },
+  "game": {
+    "select_game": "Please select a game!",
+    "unknown_game": "Unknown game!",
+    "bullsandcows": {
+      "title": "🐮 **Bulls and Cows** 🐮",
+      "title_with_difficulty": "🐮 **Bulls and Cows** 🐮 | %s %s Mode",
+      "difficulty": {
+        "easy": "Easy",
+        "hard": "Hard"
+      },
+      "info": {
+        "how_to_play": "**How to Play:**",
+        "step1": "1. I'll generate a secret 4-digit number",
+        "step2": "2. You guess the number",
+        "step3": "3. I'll tell you:",
+        "step3_a": "   • **A (Bulls)** = Correct digit in correct position",
+        "step3_b": "   • **B (Cows)** = Correct digit in wrong position",
+        "step4": "4. You have 10 attempts to guess the number!",
+        "difficulty_levels": "**Difficulty Levels:**",
+        "easy_mode": "🟢 **Easy Mode** - Digits are unique (e.g., 1234, 5678)",
+        "easy_mode_rule1": "   • No repeated digits in the answer",
+        "easy_mode_rule2": "   • Your guesses must also have unique digits",
+        "hard_mode": "🔴 **Hard Mode** - Digits can repeat (e.g., 1123, 9999)",
+        "hard_mode_rule1": "   • Digits may appear multiple times",
+        "hard_mode_rule2": "   • More challenging strategy required!",
+        "example": "**Example:**",
+        "example_secret": "Secret: `1234`",
+        "example_guess": "Guess: `1357` → Result: `1A1B`",
+        "example_explain": "(1 is in correct position = 1A, 3 is in wrong position = 1B)",
+        "ready": "**Ready to play?**",
+        "start_command": "Use `/game bullsandcows easy` or `/game bullsandcows hard` to start!"
+      },
+      "rules": {
+        "title": "**Rules:**",
+        "unique_digits": "• 4-digit number with unique digits (no repeats)",
+        "repeating_digits": "• 4-digit number with possible repeating digits",
+        "a": "• **A** = Correct digit in correct position",
+        "b": "• **B** = Correct digit in wrong position"
+      },
+      "attempts": "**Attempts:** %d/%d",
+      "history": "**History:**",
+      "no_guesses": "*No guesses yet. Click 'Make a Guess' to start!*",
+      "answer": "**Answer:** ||%s||",
+      "button": {
+        "guess": "Make a Guess",
+        "giveup": "Give Up"
+      },
+      "modal": {
+        "title": "Bulls and Cows - Make Your Guess",
+        "input_label": "Enter your 4-digit guess",
+        "input_placeholder": "e.g., 1234"
+      },
+      "error": {
+        "already_active": "You already have an active game! Please finish it first.",
+        "no_active_game": "You don't have an active game!",
+        "invalid_guess_easy": "❌ Invalid guess! Please enter 4 unique digits (0-9) - no repeating digits in easy mode.",
+        "invalid_guess_hard": "❌ Invalid guess! Please enter 4 digits (0-9)."
+      },
+      "result": {
+        "won": "🎉 **Congratulations!**\nYou guessed the number in %d attempts!",
+        "lost": "💔 **Game Over!**\nYou've used all %d attempts.",
+        "giveup": "🏳️ **You gave up!**\nBetter luck next time!"
+      }
+    }
+  }
+}
