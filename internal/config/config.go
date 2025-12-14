@@ -10,6 +10,7 @@ import (
 // Config holds all configuration for the application
 type Config struct {
 	DiscordToken string
+	LogLevel     string
 }
 
 var instance *Config
@@ -28,8 +29,14 @@ func Load() (*Config, error) {
 		return nil, fmt.Errorf("DISCORD_TOKEN environment variable is required")
 	}
 
+	logLevel := os.Getenv("LOG_LEVEL")
+	if logLevel == "" {
+		logLevel = "INFO" // Default to INFO
+	}
+
 	instance = &Config{
 		DiscordToken: token,
+		LogLevel:     logLevel,
 	}
 
 	return instance, nil

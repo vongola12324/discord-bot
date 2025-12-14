@@ -30,7 +30,7 @@ func (c *Command) Definition() *discordgo.ApplicationCommand {
 					{
 						Type:        discordgo.ApplicationCommandOptionString,
 						Name:        "difficulty",
-						Description: "Game difficulty (easy: unique digits, hard: repeating digits allowed)",
+						Description: "Game difficulty",
 						Required:    false,
 						Choices: []*discordgo.ApplicationCommandOptionChoice{
 							{

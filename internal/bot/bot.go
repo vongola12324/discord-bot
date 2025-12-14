@@ -3,11 +3,14 @@ package bot
 import (
 	"fmt"
 	"log/slog"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"hiei-discord-bot/internal/commands"
+	"hiei-discord-bot/internal/commands/blame"
 	"hiei-discord-bot/internal/commands/game"
 	"hiei-discord-bot/internal/commands/help"
 	"hiei-discord-bot/internal/commands/ping"
@@ -31,6 +34,11 @@ func New(cfg *config.Config) (*Bot, error) {
 	session, err := discordgo.New("Bot " + cfg.DiscordToken)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create Discord session: %w", err)
+	}
+
+	// Configure HTTP client with timeout
+	session.Client = &http.Client{
+		Timeout: 30 * time.Second,
 	}
 
 	// Set intents - we need guilds for slash commands
@@ -77,6 +85,12 @@ func (bot *Bot) registerCommands() {
 
 	// Register game command
 	bot.registry.Register(game.New())
+
+	// Register blame command (slash command)
+	bot.registry.Register(blame.New())
+
+	// Register blame context menu command (right-click on message)
+	bot.registry.Register(blame.NewContext())
 
 	// Register reload command with callback
 	bot.registry.Register(reload.New(func(guildID string) (int, error) {

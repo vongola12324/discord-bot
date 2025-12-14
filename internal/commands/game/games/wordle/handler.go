@@ -356,12 +356,20 @@ func fetchRandomWord(length int) (string, error) {
 
 // getUserID extracts user ID from interaction
 func getUserID(i *discordgo.InteractionCreate) string {
-	if i.Member != nil {
+	if i == nil {
+		return ""
+	}
+
+	// Guild interaction (Member takes priority)
+	if i.Member != nil && i.Member.User != nil {
 		return i.Member.User.ID
 	}
+
+	// DM interaction
 	if i.User != nil {
 		return i.User.ID
 	}
+
 	return ""
 }
 
