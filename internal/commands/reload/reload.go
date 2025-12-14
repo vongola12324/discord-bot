@@ -3,8 +3,9 @@ package reload
 import (
 	"fmt"
 
-	"github.com/bwmarrin/discordgo"
 	"hiei-discord-bot/internal/i18n"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 // Command implements the reload slash command
@@ -35,7 +36,7 @@ func (c *Command) Execute(s *discordgo.Session, i *discordgo.InteractionCreate) 
 	// Get guild ID from interaction
 	guildID := i.GuildID
 	if guildID == "" {
-		return fmt.Errorf(i18n.T(locale, "command.reload.guild_only"))
+		return fmt.Errorf("%s", i18n.T(locale, "command.reload.guild_only"))
 	}
 
 	// Respond immediately to acknowledge the interaction
