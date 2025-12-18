@@ -2,6 +2,30 @@
 
 A modern, modular Discord bot written in Go with a clean architecture that separates commands and provides extensibility.
 
+## AI Assistant Operational Guidelines (Efficiency Optimized)
+
+### 1. Interaction Strategy
+- **Single Best Option**: Always provide only the one best technical solution. **Do not provide multiple options or alternatives** unless specifically asked.
+- **Logic Focused**: Only provide the core logic or the specific function requested.
+- **No Pre-flight Checks**: I will handle `go build`, linting, and testing locally. Do not waste tokens explaining syntax or verifying builds.
+- **Diffs & Snippets**: Provide only the modified code lines. Never output the entire file unless it's a new file creation.
+- **Skip Explanations**: Omit all "Here is the code..." or "This function works by..." commentary or anything like that.
+
+### 2. Technical Context
+- **Language**: Golang.
+- **Library**: discordgo (Assume latest stable version).
+- **Style**: Direct and idiomatic Go. Use existing project patterns for error handling.
+- **Imports**: Only list new imports required for the snippet; do not list the entire import block unless requested.
+
+### 3. Token Saving Rules
+- **Ignore Boilerplate**: Do not include `package main` or standard `func main()` initialization unless those specific parts are being modified.
+- **Silence Mode**: Do not apologize for errors or give warnings about Discord API rate limits—I am aware of the constraints.
+- **Strict Context Control**: Only read content from files explicitly referenced with `@` OR the specific **lines currently selected/highlighted** in the editor.
+- **No Background Scanning**: Do not scan the directory map or unreferenced files to "gain context" unless I explicitly command a full-repo search.
+
+### 4. Environment
+- SENSITIVE: Never output or ask for Discord Tokens/Secrets. Use placeholder variable names from existing code. Never read `.env` file.
+
 ## Project Structure
 
 ```
