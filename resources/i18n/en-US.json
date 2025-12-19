@@ -15,6 +15,11 @@
       "response": "🏓 Pong! Latency: %v"
     },
     "random": {
+      "range": {
+        "dice": "%d-sided dice",
+        "integer": "%d~%d",
+        "string": "%d characters"
+      },
       "result": "🎲 Random result: `%s`"
     }
   },
@@ -46,30 +51,30 @@
         "attempts": "• 6 guessing attempts",
         "colors": "• Adjust your guess based on color hints"
       },
-      "attempts": "**Attempts:** %d/6",
-      "history": "**History:**",
-      "no_guesses": "*No guesses yet. Click 'Make a Guess' to start!*",
-      "answer": "**Answer:** ||%s||",
-      "button": {
-        "guess": "Make a Guess",
-        "giveup": "Give Up"
-      },
       "modal": {
         "title": "Wordle - Make Your Guess",
         "input_label": "Enter your %d-letter English word",
         "input_placeholder": "e.g., CRANE"
       },
-      "error": {
-        "already_active": "You already have an active game! Please finish it first.",
-        "no_active_game": "You don't have an active game!",
-        "invalid_length": "❌ Invalid guess! Please enter %d English letters.",
-        "invalid_word": "❌ Invalid word! Please enter a valid English word.",
-        "not_alpha": "❌ Invalid guess! Only English letters allowed."
+      "history": "**History:**",
+      "no_guesses": "*No guesses yet. Click 'Make a Guess' to start!*",
+      "attempts": "**Attempts:** %d/6",
+      "button": {
+        "guess": "Make a Guess",
+        "giveup": "Give Up"
       },
       "result": {
         "won": "🎉 **Congratulations!**\nYou guessed the word in %d attempts!",
         "lost": "💔 **Game Over!**\nYou've used all 6 attempts.",
         "giveup": "🏳️ **You gave up!**\nBetter luck next time!"
+      },
+      "answer": "**Answer:** ||%s||",
+      "error": {
+        "already_active": "You already have an active game! Please finish it first.",
+        "no_active_game": "You don't have an active game!",
+        "invalid_length": "❌ Invalid guess! Please enter %d English letters.",
+        "not_alpha": "❌ Invalid guess! Only English letters allowed.",
+        "invalid_word": "❌ Invalid word! Please enter a valid English word."
       }
     },
     "bullsandcows": {
@@ -108,29 +113,29 @@
         "a": "• **A** = Correct digit in correct position",
         "b": "• **B** = Correct digit in wrong position"
       },
-      "attempts": "**Attempts:** %d/%d",
-      "history": "**History:**",
-      "no_guesses": "*No guesses yet. Click 'Make a Guess' to start!*",
-      "answer": "**Answer:** ||%s||",
-      "button": {
-        "guess": "Make a Guess",
-        "giveup": "Give Up"
-      },
       "modal": {
         "title": "Bulls and Cows - Make Your Guess",
         "input_label": "Enter your 4-digit guess",
         "input_placeholder": "e.g., 1234"
       },
-      "error": {
-        "already_active": "You already have an active game! Please finish it first.",
-        "no_active_game": "You don't have an active game!",
-        "invalid_guess_easy": "❌ Invalid guess! Please enter 4 unique digits (0-9) - no repeating digits in easy mode.",
-        "invalid_guess_hard": "❌ Invalid guess! Please enter 4 digits (0-9)."
+      "history": "**History:**",
+      "no_guesses": "*No guesses yet. Click 'Make a Guess' to start!*",
+      "attempts": "**Attempts:** %d/%d",
+      "button": {
+        "guess": "Make a Guess",
+        "giveup": "Give Up"
       },
       "result": {
         "won": "🎉 **Congratulations!**\nYou guessed the number in %d attempts!",
         "lost": "💔 **Game Over!**\nYou've used all %d attempts.",
         "giveup": "🏳️ **You gave up!**\nBetter luck next time!"
+      },
+      "answer": "**Answer:** ||%s||",
+      "error": {
+        "already_active": "You already have an active game! Please finish it first.",
+        "no_active_game": "You don't have an active game!",
+        "invalid_guess_easy": "❌ Invalid guess! Please enter 4 unique digits (0-9) - no repeating digits in easy mode.",
+        "invalid_guess_hard": "❌ Invalid guess! Please enter 4 digits (0-9)."
       }
     }
   },
@@ -143,19 +148,19 @@
       "reason_label": "Enter the reason for condemnation",
       "reason_placeholder": "e.g., Spreading misinformation"
     },
+    "success_sent": "The blame message has been sent to the configured channel.",
     "error": {
       "no_target": "Target user not found!",
       "no_reason": "Please enter a reason!",
-      "invalid_data": "Invalid data!",
       "message_not_found": "Message not found!",
-      "image_load_failed": "Failed to load image!"
-    },
-    "success_sent": "The blame message has been sent to the configured channel."
+      "image_load_failed": "Failed to load image!",
+      "invalid_data": "Invalid data!"
+    }
   },
   "setting": {
     "title": "⚙️ **Bot Settings**",
-    "select_group_desc": "Please select a setting group from the menu below.",
     "select_group_placeholder": "Select group...",
+    "select_group_desc": "Please select a setting group from the menu below.",
     "select_item_placeholder": "Select item...",
     "select_value_desc": "Please select a new value:",
     "input_value_label": "Enter new value",
@@ -164,19 +169,19 @@
     "back": "⬅️ Back",
     "module": {
       "general": "General Settings",
-      "game.bullsandcows": "Bulls and Cows",
-      "blame": "Blame System"
-    },
-    "blame": {
-      "channel": {
-        "label": "Blame Channel",
-        "desc": "Set which channel the blame message should be sent to. Leave empty to send to the command channel."
-      }
+      "blame": "Blame System",
+      "game.bullsandcows": "Bulls and Cows"
     },
     "general": {
       "language": {
         "label": "Language",
         "desc": "Adjust the language the bot uses to respond to you. When set to auto, it will use your Discord language setting (defaults to English if not supported)."
+      }
+    },
+    "blame": {
+      "channel": {
+        "label": "Blame Channel",
+        "desc": "Set which channel the blame message should be sent to. Leave empty to send to the command channel."
       }
     }
   }

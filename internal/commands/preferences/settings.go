@@ -1,13 +1,19 @@
-package settings
+package preferences
 
 import (
 	"fmt"
+	"hiei-discord-bot/internal/commands"
 	"hiei-discord-bot/internal/i18n"
+	"hiei-discord-bot/internal/interactions"
 	"hiei-discord-bot/internal/settings"
 	"sort"
 
 	"github.com/bwmarrin/discordgo"
 )
+
+func init() {
+	commands.Register(New())
+}
 
 type Command struct{}
 
@@ -30,19 +36,10 @@ func (c *Command) Execute(s *discordgo.Session, i *discordgo.InteractionCreate) 
 	data := GetMainPageData(i)
 	if data == nil {
 		locale := i18n.GetUserLocaleFromInteraction(i)
-		return s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData{
-				Content: i18n.T(locale, "setting.no_available_settings"),
-				Flags:   discordgo.MessageFlagsEphemeral,
-			},
-		})
+		return interactions.RespondError(s, i, locale, "setting.no_available_settings", true)
 	}
 
-	return s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: data,
-	})
+	return interactions.RespondCustom(s, i, data)
 }
 
 func GetMainPageData(i *discordgo.InteractionCreate) *discordgo.InteractionResponseData {

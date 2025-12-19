@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"hiei-discord-bot/internal/i18n"
+	"hiei-discord-bot/internal/interactions"
 	"hiei-discord-bot/internal/settings"
 
 	"github.com/bwmarrin/discordgo"
@@ -17,11 +18,25 @@ type Registry struct {
 	mu       sync.RWMutex
 }
 
+var (
+	globalRegistry = NewRegistry()
+)
+
 // NewRegistry creates a new command registry
 func NewRegistry() *Registry {
 	return &Registry{
 		commands: make(map[string]Command),
 	}
+}
+
+// Global returns the global command registry
+func Global() *Registry {
+	return globalRegistry
+}
+
+// Register adds a command to the global registry
+func Register(cmd Command) {
+	globalRegistry.Register(cmd)
 }
 
 // Register adds a command to the registry
@@ -100,12 +115,6 @@ func (r *Registry) HandleInteraction(s *discordgo.Session, i *discordgo.Interact
 		locale := i18n.GetUserLocaleFromInteraction(i)
 
 		// Try to respond with error message
-		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData{
-				Content: i18n.T(locale, "command.execution_error"),
-				Flags:   discordgo.MessageFlagsEphemeral,
-			},
-		})
+		interactions.RespondError(s, i, locale, "command.execution_error", true)
 	}
 }

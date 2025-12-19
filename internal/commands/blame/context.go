@@ -3,13 +3,18 @@ package blame
 import (
 	"bytes"
 	"fmt"
-	"io"
-
+	"hiei-discord-bot/internal/commands"
 	"hiei-discord-bot/internal/i18n"
+	"hiei-discord-bot/internal/interactions"
 	"hiei-discord-bot/resources"
+	"io"
 
 	"github.com/bwmarrin/discordgo"
 )
+
+func init() {
+	commands.Register(NewContext())
+}
 
 // ContextCommand implements the blame context menu command
 type ContextCommand struct{}
@@ -28,6 +33,11 @@ func (c *ContextCommand) Definition() *discordgo.ApplicationCommand {
 	}
 }
 
+// Version returns the command version
+func (c *ContextCommand) Version() string {
+	return "0.0.1"
+}
+
 // Execute runs the context menu command
 func (c *ContextCommand) Execute(s *discordgo.Session, i *discordgo.InteractionCreate) error {
 	locale := i18n.GetUserLocaleFromInteraction(i)
@@ -40,14 +50,14 @@ func (c *ContextCommand) Execute(s *discordgo.Session, i *discordgo.InteractionC
 			// Fetch the target message
 			msg, err := s.ChannelMessage(i.ChannelID, data.TargetID)
 			if err != nil {
-				return respondError(s, i, locale, "blame.error.message_not_found")
+				return interactions.RespondError(s, i, locale, "blame.error.message_not_found", true)
 			}
 			targetMessage = msg
 		}
 	}
 
 	if targetMessage == nil || targetMessage.Author == nil {
-		return respondError(s, i, locale, "blame.error.no_target")
+		return interactions.RespondError(s, i, locale, "blame.error.no_target", true)
 	}
 	// Show modal to get the reason
 	return s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
@@ -84,7 +94,7 @@ func HandleModalSubmit(s *discordgo.Session, i *discordgo.InteractionCreate) err
 	fmt.Sscanf(customID, "blame_modal_%s_%s", &messageID, &targetUserID)
 
 	if messageID == "" || targetUserID == "" {
-		return respondError(s, i, locale, "blame.error.invalid_data")
+		return interactions.RespondError(s, i, locale, "blame.error.invalid_data", true)
 	}
 
 	// Get the reason from modal
@@ -101,13 +111,13 @@ func HandleModalSubmit(s *discordgo.Session, i *discordgo.InteractionCreate) err
 	}
 
 	if reason == "" {
-		return respondError(s, i, locale, "blame.error.no_reason")
+		return interactions.RespondError(s, i, locale, "blame.error.no_reason", true)
 	}
 
 	// Get target user
 	targetUser, err := s.User(targetUserID)
 	if err != nil {
-		return respondError(s, i, locale, "blame.error.no_target")
+		return interactions.RespondError(s, i, locale, "blame.error.no_target", true)
 	}
 
 	// Get the user who issued the blame

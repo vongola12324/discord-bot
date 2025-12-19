@@ -10,16 +10,6 @@ import (
 	"hiei-discord-bot/internal/i18n"
 )
 
-func init() {
-	// Initialize logger early so init() functions in other packages use the correct format
-	// Note: We can't read config here yet, so we start with INFO level
-	// It will be reconfigured in main() after loading config
-	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
-		Level: slog.LevelInfo,
-	}))
-	slog.SetDefault(logger)
-}
-
 func main() {
 	// Load configuration to get log level
 	cfg, err := config.Load()

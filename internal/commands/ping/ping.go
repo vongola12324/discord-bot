@@ -1,10 +1,16 @@
 package ping
 
 import (
+	"hiei-discord-bot/internal/commands"
 	"hiei-discord-bot/internal/i18n"
+	"hiei-discord-bot/internal/interactions"
 
 	"github.com/bwmarrin/discordgo"
 )
+
+func init() {
+	commands.Register(New())
+}
 
 // Command implements the ping slash command
 type Command struct{}
@@ -34,11 +40,5 @@ func (c *Command) Execute(s *discordgo.Session, i *discordgo.InteractionCreate) 
 
 	latency := s.HeartbeatLatency()
 
-	return s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: i18n.Tf(locale, "command.ping.response", latency),
-			Flags:   discordgo.MessageFlagsEphemeral,
-		},
-	})
+	return interactions.RespondSuccess(s, i, locale, "command.ping.response", true, latency)
 }

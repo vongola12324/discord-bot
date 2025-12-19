@@ -1,12 +1,16 @@
 package game
 
 import (
-	"hiei-discord-bot/internal/commands/game/games/bullsandcows"
-	"hiei-discord-bot/internal/commands/game/games/wordle"
+	"hiei-discord-bot/internal/commands"
 	"hiei-discord-bot/internal/i18n"
+	"hiei-discord-bot/internal/interactions"
 
 	"github.com/bwmarrin/discordgo"
 )
+
+func init() {
+	commands.Register(New())
+}
 
 // Command implements the game command with subcommands
 type Command struct{}
@@ -18,60 +22,26 @@ func New() *Command {
 
 // Definition returns the slash command definition
 func (c *Command) Definition() *discordgo.ApplicationCommand {
+	options := []*discordgo.ApplicationCommandOption{}
+	for _, sub := range GetSubCommands() {
+		options = append(options, &discordgo.ApplicationCommandOption{
+			Type:        discordgo.ApplicationCommandOptionSubCommand,
+			Name:        sub.Name(),
+			Description: sub.Description(),
+			Options:     sub.Options(),
+		})
+	}
+
 	return &discordgo.ApplicationCommand{
 		Name:        "game",
 		Description: "Play various games",
-		Options: []*discordgo.ApplicationCommandOption{
-			{
-				Type:        discordgo.ApplicationCommandOptionSubCommand,
-				Name:        "bullsandcows",
-				Description: "Play the 1A2B number guessing game",
-				Options: []*discordgo.ApplicationCommandOption{
-					{
-						Type:        discordgo.ApplicationCommandOptionString,
-						Name:        "difficulty",
-						Description: "Game difficulty",
-						Required:    false,
-						Choices: []*discordgo.ApplicationCommandOptionChoice{
-							{
-								Name:  "Easy (Unique digits)",
-								Value: "easy",
-							},
-							{
-								Name:  "Hard (Repeating digits allowed)",
-								Value: "hard",
-							},
-						},
-					},
-				},
-			},
-			{
-				Type:        discordgo.ApplicationCommandOptionSubCommand,
-				Name:        "wordle",
-				Description: "Play the Wordle word guessing game",
-				Options: []*discordgo.ApplicationCommandOption{
-					{
-						Type:        discordgo.ApplicationCommandOptionInteger,
-						Name:        "length",
-						Description: "Word length (3-10, default: 5)",
-						Required:    false,
-						MinValue:    float64Ptr(3),
-						MaxValue:    10,
-					},
-				},
-			},
-		},
+		Options:     options,
 	}
-}
-
-// float64Ptr returns a pointer to a float64
-func float64Ptr(f float64) *float64 {
-	return &f
 }
 
 // Version returns the command version
 func (c *Command) Version() string {
-	return "1.0.0"
+	return "1.1.0"
 }
 
 // Execute runs the game command
@@ -81,29 +51,13 @@ func (c *Command) Execute(s *discordgo.Session, i *discordgo.InteractionCreate) 
 
 	options := i.ApplicationCommandData().Options
 	if len(options) == 0 {
-		return respondError(s, i, locale, "game.select_game")
+		return interactions.RespondError(s, i, locale, "game.select_game", true)
 	}
 
-	subcommand := options[0]
-
-	switch subcommand.Name {
-	case "bullsandcows":
-		return bullsandcows.HandleStart(s, i)
-	case "wordle":
-		return wordle.HandleStart(s, i)
-	default:
-		return respondError(s, i, locale, "game.unknown_game")
+	subcommandName := options[0].Name
+	if sub, exists := GetSubCommand(subcommandName); exists {
+		return sub.Handle(s, i)
 	}
-}
 
-// respondError sends an error response
-func respondError(s *discordgo.Session, i *discordgo.InteractionCreate, locale i18n.SupportedLocale, messageKey string) error {
-	content := i18n.T(locale, "common.error_prefix") + " " + i18n.T(locale, messageKey)
-	return s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: content,
-			Flags:   discordgo.MessageFlagsEphemeral,
-		},
-	})
+	return interactions.RespondError(s, i, locale, "game.unknown_game", true)
 }

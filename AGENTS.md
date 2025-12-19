@@ -8,7 +8,6 @@ This document defines the operational guidelines, project architecture, and deve
 - **Single Best Option**: Always provide only the one best technical solution. Do not provide multiple options or alternatives unless specifically asked.
 - **Logic Focused**: Only provide the core logic or the specific function requested.
 - **No Pre-flight Checks**: I will handle `go build`, linting, and testing locally. Do not waste tokens explaining syntax or verifying builds.
-- **Diffs & Snippets**: Provide only the modified code lines. Never output the entire file unless it's a new file creation.
 - **Skip Explanations**: Omit all "Here is the code..." or "This function works by..." commentary.
 
 ### 2. Technical Context
@@ -20,7 +19,7 @@ This document defines the operational guidelines, project architecture, and deve
 ### 3. Token Saving Rules
 - **Ignore Boilerplate**: Do not include `package main` or standard `func main()` initialization unless those specific parts are being modified.
 - **Silence Mode**: Do not apologize for errors or give warnings about Discord API rate limits.
-- **Strict Context Control**: Only read content from files explicitly referenced or the specific lines currently selected/highlighted.
+
 
 ---
 

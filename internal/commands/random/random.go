@@ -2,14 +2,19 @@ package random
 
 import (
 	"fmt"
+	"hiei-discord-bot/internal/commands"
+	"hiei-discord-bot/internal/i18n"
+	"hiei-discord-bot/internal/interactions"
 	"math/rand"
 	"time"
-
-	"hiei-discord-bot/internal/i18n"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/google/uuid"
 )
+
+func init() {
+	commands.Register(New())
+}
 
 // Command implements the random command
 type Command struct{}
@@ -27,7 +32,7 @@ func (c *Command) Definition() *discordgo.ApplicationCommand {
 		Options: []*discordgo.ApplicationCommandOption{
 			{
 				Type:        discordgo.ApplicationCommandOptionSubCommand,
-				Name:        "int",
+				Name:        "integer",
 				Description: "Generate a random integer",
 				Options: []*discordgo.ApplicationCommandOption{
 					{
@@ -64,6 +69,19 @@ func (c *Command) Definition() *discordgo.ApplicationCommand {
 				Name:        "uuid",
 				Description: "Generate a random UUID",
 			},
+			{
+				Type:        discordgo.ApplicationCommandOptionSubCommand,
+				Name:        "dice",
+				Description: "Roll a dice",
+				Options: []*discordgo.ApplicationCommandOption{
+					{
+						Type:        discordgo.ApplicationCommandOptionInteger,
+						Name:        "face",
+						Description: "How many faces? (default: 6, minimum: 2)",
+						Required:    false,
+					},
+				},
+			},
 		},
 	}
 }
@@ -76,7 +94,7 @@ const charset = "abcdefghijklmnopqrstuvwxyz0123456789"
 
 // Version returns the command version
 func (c *Command) Version() string {
-	return "0.0.1"
+	return "0.0.3"
 }
 
 // Execute runs the random command
@@ -93,7 +111,7 @@ func (c *Command) Execute(s *discordgo.Session, i *discordgo.InteractionCreate) 
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 
 	switch subcommand.Name {
-	case "int":
+	case "integer":
 		min := int64(0)
 		max := int64(100)
 		for _, opt := range subcommand.Options {
@@ -107,7 +125,7 @@ func (c *Command) Execute(s *discordgo.Session, i *discordgo.InteractionCreate) 
 			min, max = max, min
 		}
 		val := r.Int63n(max-min+1) + min
-		result = fmt.Sprintf("%d", val)
+		result = fmt.Sprintf("%d (%s)", val, i18n.Tf(locale, "command.random.range.integer", min, max))
 	case "string":
 		length := 8
 		if len(subcommand.Options) > 0 && subcommand.Options[0].Name == "length" {
@@ -117,15 +135,24 @@ func (c *Command) Execute(s *discordgo.Session, i *discordgo.InteractionCreate) 
 		for i := range b {
 			b[i] = charset[r.Intn(len(charset))]
 		}
-		result = string(b)
+		result = fmt.Sprintf("%s (%s)", string(b), i18n.Tf(locale, "command.random.range.string", length))
 	case "uuid":
 		result = uuid.New().String()
+	case "dice":
+		face := int64(6)
+		for _, opt := range subcommand.Options {
+			if opt.Name == "face" {
+				face = opt.IntValue()
+			}
+		}
+		if face < 2 {
+			face = 2
+		}
+		val := r.Int63n(face) + 1
+		result = fmt.Sprintf("%d (%s)", val, i18n.Tf(locale, "command.random.range.dice", face))
 	}
 
-	return s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: i18n.Tf(locale, "command.random.result", result),
-		},
+	return interactions.RespondCustom(s, i, &discordgo.InteractionResponseData{
+		Content: i18n.Tf(locale, "command.random.result", result),
 	})
 }

@@ -1,4 +1,4 @@
-package settings
+package preferences
 
 import (
 	"fmt"
@@ -283,13 +283,8 @@ func updateSetting(s *discordgo.Session, i *discordgo.InteractionCreate, key, va
 	}
 
 	if err := mgr.SetSettingValue(targetDef.Scope, targetID, key, value); err != nil {
-		return s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData{
-				Content: fmt.Sprintf("Error: %v", err),
-				Flags:   discordgo.MessageFlagsEphemeral,
-			},
-		})
+		locale := i18n.GetUserLocaleFromInteraction(i)
+		return interactions.RespondError(s, i, locale, "command.execution_error", true)
 	}
 
 	// After update, return to group page

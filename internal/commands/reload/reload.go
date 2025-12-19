@@ -2,22 +2,22 @@ package reload
 
 import (
 	"fmt"
-
+	"hiei-discord-bot/internal/commands"
 	"hiei-discord-bot/internal/i18n"
 
 	"github.com/bwmarrin/discordgo"
 )
 
-// Command implements the reload slash command
-type Command struct {
-	reloadCallback func(guildID string) (int, error) // Returns command count and error
+func init() {
+	commands.Register(New())
 }
 
+// Command implements the reload slash command
+type Command struct{}
+
 // New creates a new reload command instance
-func New(reloadCallback func(guildID string) (int, error)) *Command {
-	return &Command{
-		reloadCallback: reloadCallback,
-	}
+func New() *Command {
+	return &Command{}
 }
 
 // Definition returns the slash command definition
@@ -56,7 +56,8 @@ func (c *Command) Execute(s *discordgo.Session, i *discordgo.InteractionCreate) 
 	}
 
 	// Perform the reload for this guild
-	cmdCount, reloadErr := c.reloadCallback(guildID)
+	definitions := commands.Global().GetDefinitions()
+	reloadErr := commands.SyncGuildCommands(s, commands.Global(), guildID, true)
 	if reloadErr != nil {
 		// Send error message as follow-up
 		errorMsg := fmt.Sprintf("%s %s", i18n.T(locale, "common.error_prefix"), i18n.Tf(locale, "command.reload.failed", reloadErr))
@@ -65,6 +66,8 @@ func (c *Command) Execute(s *discordgo.Session, i *discordgo.InteractionCreate) 
 		})
 		return reloadErr
 	}
+
+	cmdCount := len(definitions)
 
 	// Send success message as follow-up
 	successMsg := fmt.Sprintf("%s %s", i18n.T(locale, "common.success_prefix"), i18n.Tf(locale, "command.reload.success", cmdCount))

@@ -8,8 +8,10 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/bwmarrin/discordgo"
 	"hiei-discord-bot/internal/i18n"
+	"hiei-discord-bot/internal/interactions"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 const (
@@ -29,13 +31,7 @@ func HandleStart(s *discordgo.Session, i *discordgo.InteractionCreate) error {
 
 	// Check if user already has an active game
 	if store.HasActiveGame(userID) {
-		return s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData{
-				Content: i18n.T(locale, "game.wordle.error.already_active"),
-				Flags:   discordgo.MessageFlagsEphemeral,
-			},
-		})
+		return interactions.RespondError(s, i, locale, "game.wordle.error.already_active", true)
 	}
 
 	// Get word length from options (default: 5)
@@ -119,13 +115,7 @@ func HandleButtonClick(s *discordgo.Session, i *discordgo.InteractionCreate, act
 
 	game, exists := store.GetGame(userID)
 	if !exists {
-		return s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData{
-				Content: i18n.T(locale, "game.wordle.error.no_active_game"),
-				Flags:   discordgo.MessageFlagsEphemeral,
-			},
-		})
+		return interactions.RespondError(s, i, locale, "game.wordle.error.no_active_game", true)
 	}
 
 	switch action {
@@ -186,13 +176,7 @@ func HandleModalSubmit(s *discordgo.Session, i *discordgo.InteractionCreate) err
 
 	game, exists := store.GetGame(userID)
 	if !exists {
-		return s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData{
-				Content: i18n.T(locale, "game.wordle.error.no_active_game"),
-				Flags:   discordgo.MessageFlagsEphemeral,
-			},
-		})
+		return interactions.RespondError(s, i, locale, "game.wordle.error.no_active_game", true)
 	}
 
 	// Get the guess from modal
@@ -201,25 +185,13 @@ func HandleModalSubmit(s *discordgo.Session, i *discordgo.InteractionCreate) err
 
 	// Validate guess
 	if len(guess) != game.WordLength {
-		return s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData{
-				Content: i18n.Tf(locale, "game.wordle.error.invalid_length", game.WordLength),
-				Flags:   discordgo.MessageFlagsEphemeral,
-			},
-		})
+		return interactions.RespondError(s, i, locale, "game.wordle.error.invalid_length", true)
 	}
 
 	// Check if all characters are letters
 	for _, char := range guess {
 		if !unicode.IsLetter(char) {
-			return s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-				Type: discordgo.InteractionResponseChannelMessageWithSource,
-				Data: &discordgo.InteractionResponseData{
-					Content: i18n.T(locale, "game.wordle.error.not_alpha"),
-					Flags:   discordgo.MessageFlagsEphemeral,
-				},
-			})
+			return interactions.RespondError(s, i, locale, "game.wordle.error.not_alpha", true)
 		}
 	}
 

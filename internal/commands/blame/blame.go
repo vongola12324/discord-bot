@@ -5,12 +5,18 @@ import (
 	"fmt"
 	"io"
 
+	"hiei-discord-bot/internal/commands"
 	"hiei-discord-bot/internal/i18n"
+	"hiei-discord-bot/internal/interactions"
 	"hiei-discord-bot/internal/settings"
 	"hiei-discord-bot/resources"
 
 	"github.com/bwmarrin/discordgo"
 )
+
+func init() {
+	commands.Register(New())
+}
 
 // Command implements the blame command
 type Command struct{}
@@ -82,7 +88,7 @@ func (c *Command) Execute(s *discordgo.Session, i *discordgo.InteractionCreate) 
 	}
 
 	if targetUser == nil {
-		return respondError(s, i, locale, "blame.error.no_target")
+		return interactions.RespondError(s, i, locale, "blame.error.no_target", true)
 	}
 
 	// Defer response to buy time for processing
@@ -186,18 +192,6 @@ func buildBlameMessage(locale i18n.SupportedLocale, target *discordgo.User, reas
 		reason,
 		i18n.T(locale, "blame.message"),
 	)
-}
-
-// respondError sends an error response
-func respondError(s *discordgo.Session, i *discordgo.InteractionCreate, locale i18n.SupportedLocale, messageKey string) error {
-	content := i18n.T(locale, "common.error_prefix") + " " + i18n.T(locale, messageKey)
-	return s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: content,
-			Flags:   discordgo.MessageFlagsEphemeral,
-		},
-	})
 }
 
 // strPtr returns a pointer to a string

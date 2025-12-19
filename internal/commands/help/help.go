@@ -2,10 +2,16 @@ package help
 
 import (
 	"fmt"
+	"hiei-discord-bot/internal/commands"
+	"hiei-discord-bot/internal/interactions"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
 )
+
+func init() {
+	commands.Register(New())
+}
 
 // CommandInfo represents basic command information
 type CommandInfo struct {
@@ -14,15 +20,11 @@ type CommandInfo struct {
 }
 
 // Command implements the help slash command
-type Command struct {
-	getCommands func() []CommandInfo
-}
+type Command struct{}
 
 // New creates a new help command instance
-func New(getCommands func() []CommandInfo) *Command {
-	return &Command{
-		getCommands: getCommands,
-	}
+func New() *Command {
+	return &Command{}
 }
 
 // Definition returns the slash command definition
@@ -43,15 +45,14 @@ func (c *Command) Execute(s *discordgo.Session, i *discordgo.InteractionCreate) 
 	var builder strings.Builder
 	builder.WriteString("📋 **Available Commands:**\n\n")
 
-	for _, cmd := range c.getCommands() {
-		builder.WriteString(fmt.Sprintf("`/%s` - %s\n", cmd.Name, cmd.Description))
+	cmds := commands.Global().All()
+	for _, cmd := range cmds {
+		def := cmd.Definition()
+		builder.WriteString(fmt.Sprintf("`/%s` - %s\n", def.Name, def.Description))
 	}
 
-	return s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: builder.String(),
-			Flags:   discordgo.MessageFlagsEphemeral,
-		},
+	return interactions.RespondCustom(s, i, &discordgo.InteractionResponseData{
+		Content: builder.String(),
+		Flags:   discordgo.MessageFlagsEphemeral,
 	})
 }

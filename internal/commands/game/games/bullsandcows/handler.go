@@ -2,9 +2,9 @@ package bullsandcows
 
 import (
 	"fmt"
-	"strings"
-
 	"hiei-discord-bot/internal/i18n"
+	"hiei-discord-bot/internal/interactions"
+	"strings"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -33,7 +33,7 @@ func HandleStart(s *discordgo.Session, i *discordgo.InteractionCreate) error {
 
 	// Check if user already has an active game
 	if _, exists := manager.GetGame(userID); exists {
-		return respondError(s, i, locale, i18n.T(locale, "game.bullsandcows.error.already_active"))
+		return interactions.RespondError(s, i, locale, "game.bullsandcows.error.already_active", true)
 	}
 
 	// Start new game
@@ -44,10 +44,7 @@ func HandleStart(s *discordgo.Session, i *discordgo.InteractionCreate) error {
 	message.Components = buildGameButtons(userID, game.Locale)
 
 	// Send initial response
-	return s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: message,
-	})
+	return interactions.RespondCustom(s, i, message)
 }
 
 // showGameInfo displays game rules and difficulty information
@@ -55,12 +52,9 @@ func showGameInfo(s *discordgo.Session, i *discordgo.InteractionCreate) error {
 	locale := i18n.GetUserLocaleFromInteraction(i)
 	content := buildGameInfoContent(locale)
 
-	return s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: content,
-			Flags:   discordgo.MessageFlagsEphemeral,
-		},
+	return interactions.RespondCustom(s, i, &discordgo.InteractionResponseData{
+		Content: content,
+		Flags:   discordgo.MessageFlagsEphemeral,
 	})
 }
 
@@ -132,7 +126,7 @@ func HandleButtonClick(s *discordgo.Session, i *discordgo.InteractionCreate, act
 	game, exists := manager.GetGame(userID)
 	if !exists {
 		locale := i18n.GetUserLocaleFromInteraction(i)
-		return respondError(s, i, locale, i18n.T(locale, "game.bullsandcows.error.no_active_game"))
+		return interactions.RespondError(s, i, locale, "game.bullsandcows.error.no_active_game", true)
 	}
 
 	switch action {
@@ -176,7 +170,7 @@ func HandleButtonClick(s *discordgo.Session, i *discordgo.InteractionCreate, act
 
 	default:
 		locale := i18n.GetUserLocaleFromInteraction(i)
-		return respondError(s, i, locale, i18n.T(locale, "command.unknown"))
+		return interactions.RespondError(s, i, locale, "command.unknown", true)
 	}
 }
 
@@ -188,7 +182,7 @@ func HandleModalSubmit(s *discordgo.Session, i *discordgo.InteractionCreate) err
 	game, exists := manager.GetGame(userID)
 	if !exists {
 		locale := i18n.GetUserLocaleFromInteraction(i)
-		return respondError(s, i, locale, i18n.T(locale, "game.bullsandcows.error.no_active_game"))
+		return interactions.RespondError(s, i, locale, "game.bullsandcows.error.no_active_game", true)
 	}
 
 	// Extract guess from modal
@@ -201,12 +195,9 @@ func HandleModalSubmit(s *discordgo.Session, i *discordgo.InteractionCreate) err
 		if game.Difficulty == DifficultyEasy {
 			errorMsg = i18n.T(game.Locale, "game.bullsandcows.error.invalid_guess_easy")
 		}
-		return s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData{
-				Content: errorMsg,
-				Flags:   discordgo.MessageFlagsEphemeral,
-			},
+		return interactions.RespondCustom(s, i, &discordgo.InteractionResponseData{
+			Content: errorMsg,
+			Flags:   discordgo.MessageFlagsEphemeral,
 		})
 	}
 
@@ -352,15 +343,4 @@ func buildGameHistory(builder *strings.Builder, game *GameState) {
 // buildGameAnswer writes the answer (for game over)
 func buildGameAnswer(builder *strings.Builder, game *GameState) {
 	builder.WriteString("\n" + i18n.Tf(game.Locale, "game.bullsandcows.answer", game.Answer) + "\n")
-}
-
-// respondError sends an error response
-func respondError(s *discordgo.Session, i *discordgo.InteractionCreate, locale i18n.SupportedLocale, message string) error {
-	return s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: i18n.T(locale, "common.error_prefix") + " " + message,
-			Flags:   discordgo.MessageFlagsEphemeral,
-		},
-	})
 }

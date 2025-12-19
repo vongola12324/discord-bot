@@ -10,13 +10,6 @@ import (
 	"time"
 
 	"hiei-discord-bot/internal/commands"
-	"hiei-discord-bot/internal/commands/blame"
-	"hiei-discord-bot/internal/commands/game"
-	"hiei-discord-bot/internal/commands/help"
-	"hiei-discord-bot/internal/commands/ping"
-	"hiei-discord-bot/internal/commands/random"
-	"hiei-discord-bot/internal/commands/reload"
-	settingCommand "hiei-discord-bot/internal/commands/settings"
 	"hiei-discord-bot/internal/config"
 	"hiei-discord-bot/internal/events"
 	"hiei-discord-bot/internal/interactions"
@@ -50,7 +43,7 @@ func New(cfg *config.Config) (*Bot, error) {
 
 	bot := &Bot{
 		session:  session,
-		registry: commands.NewRegistry(),
+		registry: commands.Global(),
 		config:   cfg,
 	}
 
@@ -79,48 +72,8 @@ func New(cfg *config.Config) (*Bot, error) {
 
 // registerCommands registers all available commands
 func (bot *Bot) registerCommands() {
-	// Register ping command
-	bot.registry.Register(ping.New())
-
-	// Register help command
-	bot.registry.Register(help.New(func() []help.CommandInfo {
-		cmds := bot.registry.All()
-		infos := make([]help.CommandInfo, 0, len(cmds))
-		for _, cmd := range cmds {
-			def := cmd.Definition()
-			infos = append(infos, help.CommandInfo{
-				Name:        def.Name,
-				Description: def.Description,
-			})
-		}
-		return infos
-	}))
-
-	// Register game command
-	bot.registry.Register(game.New())
-
-	// Register setting command
-	bot.registry.Register(settingCommand.New())
-
-	// Register blame command (slash command)
-	bot.registry.Register(blame.New())
-
-	// Register random command
-	bot.registry.Register(random.New())
-
-	// Register blame context menu command (right-click on message)
-	// bot.registry.Register(blame.NewContext())
-
-	// Register reload command with callback
-	bot.registry.Register(reload.New(func(guildID string) (int, error) {
-		definitions := bot.registry.GetDefinitions()
-		if err := commands.SyncGuildCommands(bot.session, bot.registry, guildID, true); err != nil {
-			return 0, err
-		}
-		return len(definitions), nil
-	}))
-
-	// Add more commands here as needed
+	// Commands are now auto-registered via init() in their respective packages
+	// and blank-imported in internal/bot/commands.go
 }
 
 // handleInteraction handles component and modal interactions
