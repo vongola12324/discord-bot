@@ -22,8 +22,9 @@ func NewContext() *ContextCommand {
 // Definition returns the context menu command definition
 func (c *ContextCommand) Definition() *discordgo.ApplicationCommand {
 	return &discordgo.ApplicationCommand{
-		Name: "Blame",
-		Type: discordgo.MessageApplicationCommand,
+		Name:    "Blame",
+		Type:    discordgo.MessageApplicationCommand,
+		Version: "0.0.1",
 	}
 }
 

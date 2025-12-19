@@ -33,6 +33,11 @@ func (c *Command) Definition() *discordgo.ApplicationCommand {
 	}
 }
 
+// Version returns the command version
+func (c *Command) Version() string {
+	return "1.0.0"
+}
+
 // Execute runs the help command
 func (c *Command) Execute(s *discordgo.Session, i *discordgo.InteractionCreate) error {
 	var builder strings.Builder

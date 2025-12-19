@@ -1,8 +1,9 @@
 package ping
 
 import (
-	"github.com/bwmarrin/discordgo"
 	"hiei-discord-bot/internal/i18n"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 // Command implements the ping slash command
@@ -19,6 +20,11 @@ func (c *Command) Definition() *discordgo.ApplicationCommand {
 		Name:        "ping",
 		Description: "Check if the bot is responsive and shows latency",
 	}
+}
+
+// Version returns the command version
+func (c *Command) Version() string {
+	return "1.0.0"
 }
 
 // Execute runs the ping command

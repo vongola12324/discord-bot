@@ -16,7 +16,7 @@ func (h *Handler) OnGuildCreate(s *discordgo.Session, g *discordgo.GuildCreate) 
 		"owner_id", g.OwnerID,
 	)
 
-	if err := commands.SyncGuildCommands(s, h.registry, g.ID); err != nil {
+	if err := commands.SyncGuildCommands(s, h.registry, g.ID, false); err != nil {
 		slog.Error("Failed to sync commands for new guild",
 			"guild_id", g.ID,
 			"guild_name", g.Name,

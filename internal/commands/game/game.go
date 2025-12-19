@@ -69,6 +69,11 @@ func float64Ptr(f float64) *float64 {
 	return &f
 }
 
+// Version returns the command version
+func (c *Command) Version() string {
+	return "1.0.0"
+}
+
 // Execute runs the game command
 func (c *Command) Execute(s *discordgo.Session, i *discordgo.InteractionCreate) error {
 	// Get user locale

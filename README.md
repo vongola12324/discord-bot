@@ -136,6 +136,10 @@ func (c *Command) Definition() *discordgo.ApplicationCommand {
     }
 }
 
+func (c *Command) Version() string {
+	return "0.0.1"
+}
+
 func (c *Command) Execute(s *discordgo.Session, i *discordgo.InteractionCreate) error {
     // Command logic here
     return nil

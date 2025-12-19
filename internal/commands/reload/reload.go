@@ -28,6 +28,11 @@ func (c *Command) Definition() *discordgo.ApplicationCommand {
 	}
 }
 
+// Version returns the command version
+func (c *Command) Version() string {
+	return "1.0.0"
+}
+
 // Execute runs the reload command
 func (c *Command) Execute(s *discordgo.Session, i *discordgo.InteractionCreate) error {
 	// Extract locale from interaction

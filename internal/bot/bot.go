@@ -14,10 +14,14 @@ import (
 	"hiei-discord-bot/internal/commands/game"
 	"hiei-discord-bot/internal/commands/help"
 	"hiei-discord-bot/internal/commands/ping"
+	"hiei-discord-bot/internal/commands/random"
 	"hiei-discord-bot/internal/commands/reload"
+	settingCommand "hiei-discord-bot/internal/commands/settings"
 	"hiei-discord-bot/internal/config"
 	"hiei-discord-bot/internal/events"
 	"hiei-discord-bot/internal/interactions"
+	"hiei-discord-bot/internal/settings"
+	"hiei-discord-bot/internal/settings/store"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -48,6 +52,15 @@ func New(cfg *config.Config) (*Bot, error) {
 		session:  session,
 		registry: commands.NewRegistry(),
 		config:   cfg,
+	}
+
+	// Initialize settings store
+	sqliteStore, err := store.NewSQLiteStore("database.db")
+	if err != nil {
+		slog.Error("Failed to initialize settings store", "error", err)
+	} else {
+		settings.GetManager().SetStore(sqliteStore)
+		slog.Info("Settings store initialized")
 	}
 
 	// Register commands
@@ -86,45 +99,28 @@ func (bot *Bot) registerCommands() {
 	// Register game command
 	bot.registry.Register(game.New())
 
+	// Register setting command
+	bot.registry.Register(settingCommand.New())
+
 	// Register blame command (slash command)
 	bot.registry.Register(blame.New())
 
+	// Register random command
+	bot.registry.Register(random.New())
+
 	// Register blame context menu command (right-click on message)
-	bot.registry.Register(blame.NewContext())
+	// bot.registry.Register(blame.NewContext())
 
 	// Register reload command with callback
 	bot.registry.Register(reload.New(func(guildID string) (int, error) {
 		definitions := bot.registry.GetDefinitions()
-		if err := commands.SyncGuildCommands(bot.session, bot.registry, guildID); err != nil {
+		if err := commands.SyncGuildCommands(bot.session, bot.registry, guildID, true); err != nil {
 			return 0, err
 		}
 		return len(definitions), nil
 	}))
 
 	// Add more commands here as needed
-}
-
-// syncCommands synchronizes slash commands with Discord for all guilds
-func (bot *Bot) syncCommands() error {
-	slog.Info("Syncing slash commands with Discord...")
-
-	var failedGuilds []string
-
-	// Sync commands to all guilds the bot is in
-	for _, guild := range bot.session.State.Guilds {
-		if err := commands.SyncGuildCommands(bot.session, bot.registry, guild.ID); err != nil {
-			slog.Error("Failed to sync commands for guild", "guild_id", guild.ID, "guild_name", guild.Name, "error", err)
-			failedGuilds = append(failedGuilds, guild.ID)
-			continue
-		}
-	}
-
-	if len(failedGuilds) > 0 {
-		return fmt.Errorf("failed to sync commands for %d guild(s): %v", len(failedGuilds), failedGuilds)
-	}
-
-	slog.Info("Successfully synced all commands")
-	return nil
 }
 
 // handleInteraction handles component and modal interactions
@@ -143,6 +139,11 @@ func (bot *Bot) handleInteraction(s *discordgo.Session, i *discordgo.Interaction
 func (bot *Bot) Start() error {
 	if err := bot.session.Open(); err != nil {
 		return fmt.Errorf("failed to open Discord session: %w", err)
+	}
+
+	// Sync local command versions at startup
+	if err := commands.SyncLocalCommandVersions(bot.registry); err != nil {
+		slog.Error("Failed to sync local command versions", "error", err)
 	}
 
 	slog.Info("Bot is now running. Press CTRL+C to exit.")

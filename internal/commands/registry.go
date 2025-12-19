@@ -5,8 +5,10 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/bwmarrin/discordgo"
 	"hiei-discord-bot/internal/i18n"
+	"hiei-discord-bot/internal/settings"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 // Registry manages all bot commands
@@ -30,6 +32,15 @@ func (r *Registry) Register(cmd Command) {
 	name := strings.ToLower(cmd.Definition().Name)
 	r.commands[name] = cmd
 	slog.Info("Registered command", "name", name)
+
+	// Auto-register settings if command is configurable
+	if conf, ok := cmd.(settings.Configurable); ok {
+		mgr := settings.GetManager()
+		for _, def := range conf.Settings() {
+			mgr.Register(def)
+			slog.Info("Registered setting", "key", def.Key, "command", name)
+		}
+	}
 }
 
 // Get retrieves a command by name
